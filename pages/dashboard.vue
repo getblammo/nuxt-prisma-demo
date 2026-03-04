@@ -4,36 +4,31 @@
       <h1>Dashboard</h1>
       <p class="subtitle">Your account overview</p>
 
-      <div v-if="session.data?.user" class="user-details">
+      <div v-if="user" class="user-details">
         <div class="detail-row">
           <span class="label">Name</span>
-          <span class="value">{{ session.data.user.name }}</span>
+          <span class="value">{{ user.name }}</span>
         </div>
         <div class="detail-row">
           <span class="label">Email</span>
-          <span class="value">{{ session.data.user.email }}</span>
-        </div>
-        <div class="detail-row">
-          <span class="label">Member since</span>
-          <span class="value">{{ new Date(session.data.user.createdAt).toLocaleDateString() }}</span>
+          <span class="value">{{ user.email }}</span>
         </div>
       </div>
 
       <div v-else class="loading">
-        Loading...
+        Not authenticated. <NuxtLink to="/login">Login</NuxtLink>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-const { session } = useAuth()
+const sessionData = await useServerSession()
+const user = computed(() => (sessionData.value as any)?.user || null)
 
-watch(() => session.data, (val) => {
-  if (val && !val.user) {
-    navigateTo('/login')
-  }
-}, { immediate: true })
+if (!user.value) {
+  navigateTo('/login')
+}
 </script>
 
 <style scoped>

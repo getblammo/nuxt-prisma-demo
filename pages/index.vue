@@ -4,8 +4,8 @@
       <h1>Welcome to Prisma Demo</h1>
       <p class="subtitle">A Nuxt 3 application with Prisma ORM and Better Auth</p>
 
-      <div v-if="session.data?.user" class="user-info">
-        <p>You are logged in as <strong>{{ session.data.user.name }}</strong> ({{ session.data.user.email }})</p>
+      <div v-if="user" class="user-info">
+        <p>You are logged in as <strong>{{ user.name }}</strong> ({{ user.email }})</p>
         <NuxtLink to="/dashboard" class="btn">Go to Dashboard</NuxtLink>
       </div>
 
@@ -21,7 +21,8 @@
 </template>
 
 <script setup lang="ts">
-const { session } = useAuth()
+const sessionData = await useServerSession()
+const user = computed(() => (sessionData.value as any)?.user || null)
 </script>
 
 <style scoped>

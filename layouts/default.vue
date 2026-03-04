@@ -4,12 +4,12 @@
       <div class="nav-content">
         <NuxtLink to="/" class="brand">Prisma Demo</NuxtLink>
         <div class="nav-links">
-          <template v-if="session.data?.user">
-            <span class="greeting">Hello, {{ session.data.user.name }}</span>
+          <template v-if="user">
+            <span class="greeting">Hello, {{ user.name }}</span>
             <NuxtLink to="/dashboard" class="nav-link">Dashboard</NuxtLink>
             <a href="#" class="nav-link" @click.prevent="handleLogout">Logout</a>
           </template>
-          <template v-else-if="!session.isPending">
+          <template v-else>
             <NuxtLink to="/login" class="nav-link">Login</NuxtLink>
             <NuxtLink to="/signup" class="nav-link">Sign Up</NuxtLink>
           </template>
@@ -23,7 +23,10 @@
 </template>
 
 <script setup lang="ts">
-const { session, signOut } = useAuth()
+const sessionData = await useServerSession()
+const user = computed(() => (sessionData.value as any)?.user || null)
+
+const { signOut } = useAuth()
 
 const handleLogout = async () => {
   await signOut()

@@ -24,3 +24,12 @@ export const useAuth = () => {
     signOut,
   }
 }
+
+// Server-side session fetch — uses useRequestHeaders to forward cookies during SSR.
+export const useServerSession = async () => {
+  const headers = import.meta.server ? useRequestHeaders(['cookie']) : {}
+  const { data } = await useFetch('/api/auth/get-session', {
+    headers: headers as Record<string, string>,
+  })
+  return data
+}
